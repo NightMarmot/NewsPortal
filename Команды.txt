@@ -1,0 +1,81 @@
+Создать двух пользователей (с помощью метода User.objects.create_user('username')).
+Создать два объекта модели Author, связанные с пользователями.
+user1=Author.objects.create(user = User.objects.create_user('Первый_нах'))
+user2=Author.objects.create(user = User.objects.create_user('Второй'))
+
+Добавить 4 категории в модель Category:
+>>> Category.objects.create(name='Политика')
+>>> Category.objects.create(name='ИТ')
+>>> Category.objects.create(name='Cпорт')
+>>> Category.objects.create(name='Авто')
+
+
+Добавить 2 статьи и 1 новость:
+>>>user1_nw=Post.objects.create(ar_or_nw = 'NW', title='МИД: Россия надеется на скорейшую нормализацию ситуации в Казахстане', body='Министерство иностранных дел России призвало 
+решать проблемы Казахстана путем диалога вместо уличных беспорядков, следует из сообщения на сайте ведомства. В министерстве выразили надежду на нормализацию положения в «стране, 
+с которой Россию связывают отношения стратегического партнерства и союзничества, братские, человеческие контакты». МИД отметил, что президент Казахстана Касым-Жомарт Токаев 
+пытается стабилизировать ситуацию и решить существующие проблемы республики.', author=user1)
+
+>>>user1_ar=Post.objects.create(title='«Краснодар» уволил главного тренера', body='«Краснодар» объявил о расторжении контракта с главным тренером Виктором Гончаренко. Кроме того, 
+клуб покинут два его ассистента – Василий Березуцкий и Александр Ермакович. Ранее южане расстались с двумя другими специалистами штаба – Русланом Зубиком и тренером-аналитиком 
+Андреа Бьянки. После 18 туров чемпионата Российской премьер-лиги (РПЛ) «Краснодар занимает пятое место в турнирной таблице. В активе «быков» 29 очков – до топ-3 им не хватает 
+двух баллов; отставание от лидирующего «Зенита» составляет девять очков. Следующий матч краснодарцы сыграют 26 февраля на домашнем поле против «Локомотива».', author=user1)
+
+>>> user2_ar=Post.objects.create(title='Что ждёт всех автомобилистов в 2022 году', body='В 2022 году у россиян появится возможность наказывать нарушителей ПДД с помощью специального 
+приложения в смартфоне. Штрафы будут выписываться владельцам авто также, как и в случае с дорожными камерами — автоматически на основании фотографий и видеозаписей. Еще одно важное 
+нововведение — отмена техосмотра для личного легкового транспорта. В отношении коммерческого транспорта требования остались прежними. Кроме этого, ТО придётся проходить 
+собственникам авто перед продажей машины возрастом старше 4 лет.', author=user2)
+
+Эта модель должна содержать в себе статьи и новости, которые создают пользователи.
+>>> PostCategory.objects.create(post=user1_nw, category=Category.objects.get(pk=1))	
+>>> PostCategory.objects.create(post=user1_ar, category=Category.objects.get(pk=3))
+>>> PostCategory.objects.create(post=user2_ar, category=Category.objects.get(pk=4))
+
+Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+>>> Comment.objects.create(comment_text='Отличная статья', post=user1_nw, user=user2)
+>>> Comment.objects.create(comment_text='Спорно!', post=user2_ar, user=user2)
+>>> Comment.objects.create(comment_text='Молодец, поддерживаю!!!', post=user1_nw, user=user2)
+>>> Comment.objects.create(comment_text='Давай!', post=user2_ar, user=user2)
+           
+Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+>>> for i in range(16):
+...     Comment.objects.get(id=1).like()
+…
+>>> for i in range(24):
+...     Comment.objects.get(id=2).like()
+...
+>>> for i in range(11):
+...     Comment.objects.get(id=3).like()
+...
+>>> for i in range(29):
+...     Comment.objects.get(id=4).like()
+...
+>>> for i in range(14):
+...     user1_nw.like()
+...
+>>> for i in range(25):
+...     user2_ar.like()
+...
+>>> for i in range(9):
+...     user1_ar.like()
+…
+Обновить рейтинги пользователей
+>>> for i in Author.objects.all():
+...     i.update_rating()
+
+Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+>>> hi_rait=Author.objects.all().order_by('rating_author')[0]
+>>> hi_rait.user.username
+>>> hi_rait.rating_author
+
+Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+best=Post.objects.filter(ar_or_nw = 'AR').order_by('-rating_post')[0]
+best.publish.date()
+best.author.user.username
+best.rating_post
+best.title
+best.preview()
+
+Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+for i in Comment.objects.filter(post = best):
+...     print(i.publish_comment.date(),':', i.user.user.username,',', i.rating_comment,',', i.comment_text)
