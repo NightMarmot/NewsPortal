@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Все новости
+{% endblock title %}
+
+{% block content %}
+    <h1>Все новости</h1>
+    {% if news %}
+        <ul>
+        {% for post in news %}
+        <li>
+          <a href="/news/{{ post.pk }}">{{ post.title }}</a>
+            <p>{{ post.publish | date:"H-M-Y" }} {{ post.publish | time:"H:i" }}</p>
+            <p>{{ post.body|truncatechars:50 }}</p>
+        </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <h2>Новостей нет!</h2>
+    {% endif %}
+{% endblock content %}
