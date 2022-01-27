@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import *
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 
 class Author (models.Model):
@@ -20,11 +21,14 @@ class Category(models.Model):
 
 
 class Post (models.Model):
-    T_CHOICES = (
-    ('AR', 'Статья'),
-    ('NW', 'Новость'),
-    )
-    ar_or_nw = models.CharField(max_length=2, choices=T_CHOICES, default='AR')
+    ARTICLE = 'AR'
+    NEWS = 'NW'
+
+    TYPES = [
+        (ARTICLE, 'Статья'),
+        (NEWS, 'новость'),
+    ]
+    ar_or_nw = models.CharField(max_length=2, choices=TYPES, default=NEWS)
     publish = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     body = models.TextField()
@@ -34,8 +38,7 @@ class Post (models.Model):
     category = models.ManyToManyField(Category, through='PostCategory')
 
     def preview(self):
-        len_ = 124 if len(self.body) > 124 else len(self.body)
-        return self.body[:len_]+'...'
+        return f'Заголовок: {self.title}\n Статья: {self.text[:124]} ...'
 
     def like(self):
         self.rating_post += 1
