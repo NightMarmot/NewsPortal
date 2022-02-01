@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView
 from .models import Post, Category
 from datetime import datetime
@@ -9,7 +9,6 @@ class PostList(ListView):
     template_name = 'news.html'
     context_object_name = 'news'
     ordering = ['-publish']
-    paginate_by = 10
     queryset = Post.objects.order_by('-id')
 
     def get_context_data(self, **kwargs):
