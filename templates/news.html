@@ -1,22 +1,97 @@
 {% extends 'flatpages/default.html' %}
 
+{% load custom_filters %}
+
 {% block title %}
-Все новости
+News
 {% endblock title %}
 
 {% block content %}
-    <h1>Все новости</h1>
+<h1>Все новости</h1>
+<h3>Всего новостей: {{news|length}}</h3>
     {% if news %}
-        <ul>
-        {% for post in news %}
-        <li>
-          <a href="/news/{{ post.pk }}">{{ post.title }}</a>
-            <p>{{ post.publish | date:"H-M-Y" }} {{ post.publish | time:"H:i" }}</p>
-            <p>{{ post.body|truncatechars:50 }}</p>
-        </li>
+        <table>
+            <tr>
+                <td>
+                  <b> Редактировать/Удалить &nbsp <!--тег пробела--> </b>
+              <!--Закрываем тег столбца-->
+              </td>
+              <td>
+                  <b> &nbsp Заголовок &nbsp </b>
+              </td>
+              <td>
+                  <b> &nbsp Категория &nbsp </b>
+              </td>
+              <td>
+                  <b> &nbsp Дата публикации &nbsp </b>
+              </td>
+              <td>
+                  <b> &nbsp Автор публикации &nbsp </b>
+              </td>
+              <td>
+                  <b> &nbsp Краткое содержание &nbsp </b>
+              </td>
+            </tr>
+        {% for post in filter.qs %}
+
+            <tr>
+                <td>
+                  <!-- добавим ссылку на редактирование поста-->
+                  <a href="{% url 'news_update' post.id %}"><b>Редактировать</b></a>  &nbsp
+                  <!-- добавим ссылку на удаление поста-->
+                  <a href="{% url 'news_delete' post.id %}"><b>Удалить</b></a>
+              </td>
+            </tr>
+            <tr>
+                <td>
+                  <!-- При нажатии на имя поста в таблице нас теперь будет перекидывать на страницу с информацией о посте -->
+                  <a href="{% url 'news_detail' post.id %}">{{ post.title|censor }}</a>
+              </td>
+              <td>
+                  <!--Выводим время создания поста, с фильтром-->
+                  {{ post.publish|date:'d M Y'}}
+              </td>
+              <td>
+                  <!--Выводим автора поста-->
+                  {{ post.author }}
+              </td>
+              <td>
+                  <!--Выводим содержание поста с использованием фильтра "цензор"-->
+                  <!--фильтр написан в файле custom_filters.py в папке templatetags-->
+                  {{ post.body|truncatechars:50|censor }}
+              </td>
+            </tr>
         {% endfor %}
-        </ul>
-    {% else %}
-        <h2>Новостей нет!</h2>
-    {% endif %}
+      <!--закрываем таблицу-->
+      </table>
+      <br>
+      <p align="right">
+          <button><a href="{% url 'news_create' %}">Добавить новую публикацию</a></button> <br>
+      </p>
+      <!--Прописываем постраничный вывод постов-->
+      <!-- Проверяем что поддерживается постраничный вывод -->
+      {% if is_paginated %}
+          <!-- Если доступна предыдущая страница, то даём ссылку на неё и самую первую страницу -->
+          {% if page_obj.has_previous %}
+              <a href="?page=1">First</a>
+              <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+          {% endif %}
+          <!-- Показываем только текущую страницу и ближайшие к ней, чтобы список не тянулся и не захламлял страницу -->
+          {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                  <a>{{ num }}</a>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                  <a href="?page={{ num }}">{{ num }}</a>
+              {% endif %}
+          {% endfor %}
+          <!-- Если есть следующая страница, то даём ссылку на неё и на самую последнюю страницу -->
+          {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}">>>></a>
+              <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+          {% endif %}
+      {% endif %}
+  <!--Иначе, выводим сообщение:-->
+  {% else %}
+      <h2>Публикаций нет!</h2>
+  {% endif %}
 {% endblock content %}

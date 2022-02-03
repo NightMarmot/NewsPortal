@@ -1,0 +1,61 @@
+{% extends 'default.html' %}
+
+<!--Тег загрузки собственных фильтров из файла
+ custom_filters.py в папке templatetags-->
+{% load custom_filters %}
+
+<!--Описание заголовка-->
+{% block title %}
+Post detail
+{% endblock title %}
+
+<!--Описание содержания страницы-->
+{% block content %}
+<h1>Подробная информация о публикации</h1>
+  <hr>
+<table>
+    <!--Заголовок таблицы-->
+    <thead>
+        <td>
+            <b>Автор публикации &nbsp </b>
+        </td>
+        <td>
+            <b>Тип публикации &nbsp </b>
+        </td>
+        <td>
+            <b>Время публикации &nbsp </b>
+        </td>
+        <td>
+            <b>Категория публикации &nbsp </b>
+        </td>
+        <td>
+            <b>Заголовок публикации &nbsp </b>
+        </td>
+        <td>
+            <b>Содержание публикации &nbsp </b>
+        </td>
+        <td>
+            <b>Рейтинг публикации &nbsp </b>
+        </td>
+    </thead>
+    <!--Наполнение таблицы информацией об объекте из БД-->
+    <tr>
+        <td>
+            {{ post.author }}
+        </td>
+        <td>
+            {{ post.publish|date:'d M Y' }}
+        </td>
+        <td>
+            {{ post.title }}
+        </td>
+        <td>
+            {{ post.body|truncatechars:50|censor  }}
+        </td>
+        <td>
+            {{ post.rating_post }}
+        </td>
+    </tr>
+</table>
+<br>
+{% endblock content %}

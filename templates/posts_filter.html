@@ -1,0 +1,59 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+{% block title %}
+Поиск
+{% endblock title %}
+
+{% block content %}
+<h1>Поиск статей</h1>
+
+    <form method="GET">
+    {{ filter.form }}
+        <input type="submit" value="Найти">
+    </form>
+
+    {% if filter.qs %}
+        <p>Всего статей: {{ filter.qs|length }}.</p>
+
+        <table>
+            <thead><tr>
+                <td>Заголовок</td>
+                <td>Дата</td>
+                <td>Превью текста</td>
+            </tr></thead>
+            {% for post in filter.qs %}
+            <tr>
+                <td><a href="/news/{{ post.pk }}/">{{ post.title }}</a></td>
+                <td>{{ post.publish|date:'d M Y' }}</td>
+                <td>{{ post.body|truncatechars:50|censor }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+{% if is_paginated %}
+
+    {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <a>{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">>>></a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+
+{% endif %}
+
+    {% else %}
+    <h2>Статей нет</h2>
+    {% endif %}
+{% endblock content %}
