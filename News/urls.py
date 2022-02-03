@@ -1,29 +1,12 @@
-"""NewsPortal URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path, include
-from News.views import IndexView
-
+from django.urls import path
+from .views import PostList, PostDetail, FilterPostView, PostCreateView, PostDeleteView, PostUpdateView,\
+    IndexView, add_subscribe
 
 urlpatterns = [
-    path('', IndexView.as_view()),
-    path('admin/', admin.site.urls),
-    path('', include('protect.urls')),
-    path('pages/', include('django.contrib.flatpages.urls')),
-    path('post/', include('News.urls')),
-    path('account/', include('allauth.urls')),
-    path('sign/', include('sign.urls')),
+    path('', PostList.as_view(), name='news'),
+    path('<int:pk>', PostDetail.as_view(), name='news_detail'),
+    path('search/', FilterPostView.as_view(), name='search'),
+    path('create/', PostCreateView.as_view(), name='news_create'),
+    path('create/<int:pk>', PostUpdateView.as_view(), name='news_update'),
+    path('delete/<int:pk>', PostDeleteView.as_view(), name='news_delete'),
 ]
