@@ -86,7 +86,11 @@ class IndexView(View):
         # printer.apply_async([10], countdown=5)
         # printer.apply_async([10], eta=datetime.now() + timedelta(seconds=5))
         # hello.delay()
-        return HttpResponse('Hello!')
+        return redirect('/post/')
+
+    class MyView(PermissionRequiredMixin, View):
+        permission_required = ('<app>.<action>_<model>',
+                               '<app>.<action>_<model>')
 
 
 @login_required
