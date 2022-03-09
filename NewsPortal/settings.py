@@ -151,7 +151,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/sign/login/'
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'
 
@@ -161,7 +161,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-ACCOUNT_FORMS = {'signup': 'sign.models.CommonSignupForm'}
+ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
 
 CELERY_BROKER_URL = 'redis://localhost:6379'  # указывает на URL брокера сообщений (Redis).
                                               # По умолчанию он находится на порту 6379.

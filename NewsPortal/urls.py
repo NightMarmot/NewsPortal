@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from News.views import IndexView
-
+from sign.views import *
 
 urlpatterns = [
     path('', IndexView.as_view()),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('protect.urls')),
     path('pages/', include('django.contrib.flatpages.urls')),
     path('post/', include('News.urls')),
-    path('account/', include('allauth.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('upgrade/', upgrade_me, name='upgrade'),
     path('sign/', include('sign.urls')),
 ]
